@@ -1,0 +1,13 @@
+{
+  "name": "orbit-recorder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension: record calls, videos and voice notes, make step-by-step guides, and send the notes to your own system.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node test/e2e.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}

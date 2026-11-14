@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orbit Recorder</title>
+<style>
+  @font-face { font-family: "League Spartan"; src: url(fonts/league-spartan.woff2) format("woff2"); font-weight: 100 900; font-display: block; }
+  * { box-sizing: border-box; }
+  body { margin:0; width:300px; font:14px/1.35 "League Spartan", Inter, system-ui, -apple-system, sans-serif; color:#111; background:#fff; }
+  [hidden] { display:none !important; }
+  .w { padding:16px; }
+  .top { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .top img { width:26px; height:auto; }
+  .top b { font-size:17px; font-weight:600; }
+  p { margin:0; color:#444; }
+  a, button, select { font:inherit; }
+  a:focus-visible, button:focus-visible, select:focus-visible { outline:none; box-shadow:0 0 0 2px #fff, 0 0 0 4px #9140B0; }
+
+  /* the three things it does: one tile each */
+  .tiles { display:grid; gap:8px; }
+  .tile { display:grid; grid-template-columns:40px 1fr 14px; align-items:center; gap:12px; width:100%; text-align:left;
+          background:#fff; color:#111; border:1.5px solid #dcdcdc; border-radius:16px; padding:12px 12px 11px; cursor:pointer; }
+  .tile:hover { border-color:#111; }
+  .tile:disabled { cursor:default; opacity:.6; }
+  .ic { width:40px; height:40px; border-radius:50%; background:#111; color:#fff; display:grid; place-items:center; flex:none; }
+  .ic svg { width:20px; height:20px; }
+  .tile b { display:block; font-size:16px; font-weight:600; line-height:1.2; }
+  .tile span { display:block; font-size:13px; color:#555; margin-top:2px; }
+  .tile .chev { width:14px; height:14px; color:#8a8a8a; }
+  .tile:hover .chev { color:#9140B0; }
+  /* Record a video starts in one press once it was set up */
+  .again { margin:-2px 4px 2px; font-size:12.5px; color:#555; line-height:1.4; }
+  .again button { border:0; background:none; padding:0; font:inherit; font-weight:600; color:#9140B0; text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
+  .say { margin-top:10px; font-size:13px; color:#111; border-left:0; }
+  .say b { font-weight:600; }
+
+  /* Record a video: what, camera, mic, start */
+  .back { display:inline-flex; align-items:center; gap:4px; background:none; border:0; padding:4px 8px 4px 2px; margin:-4px 0 8px -2px; border-radius:999px;
+          font-size:13px; font-weight:600; color:#555; cursor:pointer; }
+  .back:hover { color:#111; }
+  .back svg { width:12px; height:12px; }
+  h2 { margin:0 0 10px; font-size:17px; font-weight:600; }
+  .rows { display:grid; gap:8px; margin-bottom:12px; }
+  .pick { position:relative; display:block; height:52px; border:1.5px solid #dcdcdc; border-radius:999px; background:#fff; }
+  .pick:hover { border-color:#111; }
+  .pick:focus-within { border-color:#9140B0; box-shadow:0 0 0 3px rgba(145,64,176,.22); }
+  .pick .ic { position:absolute; left:5px; top:5px; width:39px; height:39px; pointer-events:none; }
+  .pick .ic svg { width:18px; height:18px; }
+  .pick em { position:absolute; left:56px; top:7px; font-style:normal; font-size:12px; color:#666; pointer-events:none; }
+  .pick select { position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:999px; background:transparent; color:#111; cursor:pointer;
+                 -webkit-appearance:none; appearance:none; padding:20px 38px 2px 56px; font-size:15px; font-weight:600; text-overflow:ellipsis; outline:none; box-shadow:none !important; }
+  .pick .chev { position:absolute; right:16px; top:19px; width:14px; height:14px; color:#666; pointer-events:none; }
+  .go { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; border:0; border-radius:999px; padding:13px 16px 12px;
+        background:#111; color:#fff; font-size:15px; font-weight:600; cursor:pointer; }
+  .go:hover { background:#333; } .go:disabled { background:#9b9b9b; cursor:default; }
+  .go i { width:10px; height:10px; border-radius:50%; background:#fff; flex:none; }
+  .go.stop i { border-radius:2px; }
+  .hint { margin-top:9px; font-size:12.5px; color:#555; }
+  .go.line { background:#fff; color:#111; box-shadow:inset 0 0 0 1.5px #111; }
+  .go.line:hover { background:#111; color:#fff; }
+  .gcount { font-size:15px; font-weight:600; color:#111; }
+
+  /* small, at the bottom: the library, settings, which version this is */
+  .foot { margin-top:14px; padding-top:12px; border-top:1px solid #e6e6e6; display:grid; gap:8px; font-size:13px; }
+  .foot .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .foot a { color:#111; font-weight:600; text-decoration:underline; text-underline-offset:2px; border-radius:4px; }
+  .foot a:hover { color:#9140B0; }
+  .foot .links { display:flex; gap:14px; }
+  .ver { font-size:12px; color:#6b6b6b; } .ver.old { color:#111; } .ver a { color:#9140B0; }
+  .kept { color:#111; }
+  .mini { border:1.5px solid #111; background:#fff; color:#111; border-radius:999px; padding:5px 12px 4px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .mini:hover { background:#111; color:#fff; }
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="top"><img src="icons/icon-48.png" alt=""><b>Orbit Recorder</b></div>
+
+  <section id="home">
+    <div class="tiles">
+      <button class="tile" id="meet" type="button">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.2 3-5 6-5s5.400 1.800 6 5"/><path d="M16 5.200a3.200 3.200 0 0 1 0 5.600"/><path d="M18 14.500c1.700.800 2.700 2.400 3 4.500"/></svg></i>
+        <div><b>Record a call</b><span>A Meet, Zoom or Teams call, both sides.</span></div>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.500 9.500 7 5 11.500"/></svg>
+      </button>
+      <button class="tile" id="video" type="button">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.500" width="18" height="12.500" rx="2.500"/><path d="M8.500 20.500h7"/><circle cx="12" cy="10.750" r="2.600" fill="currentColor" stroke="none"/></svg></i>
+        <div><b>Record a video</b><span id="vline">Your screen, with your face if you like.</span></div>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.500 9.500 7 5 11.500"/></svg>
+      </button>
+      <p class="again" id="vagain" hidden>One press starts it the way you set it last time. <button type="button" id="vchange">Change</button></p>
+      <button class="tile" id="audio" type="button">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11.500a6.500 6.500 0 0 0 13 0M12 18v3"/></svg></i>
+        <div><b>Record audio</b><span>A phone call or a voice note, sound only.</span></div>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.500 9.500 7 5 11.500"/></svg>
+      </button>
+      <button class="tile" id="guide" type="button">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6.500h10M10 12h10M10 17.500h10"/><circle cx="5" cy="6.500" r="1.400" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.400" fill="currentColor" stroke="none"/><circle cx="5" cy="17.500" r="1.400" fill="currentColor" stroke="none"/></svg></i>
+        <div><b>Make a step-by-step guide</b><span>Click through it once; each click is a step with a picture.</span></div>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.500 9.500 7 5 11.500"/></svg>
+      </button>
+    </div>
+    <p class="say" id="say" role="status" hidden></p>
+  </section>
+
+  <section id="glive" hidden>
+    <h2>Making a guide</h2>
+    <p class="gcount" id="gcount" role="status"></p>
+    <p class="hint" id="gsay" style="margin:2px 0 12px"></p>
+    <div class="rows">
+      <button class="go" id="gpage" type="button" hidden>Add this page as a step</button>
+      <button class="go" id="gfinish" type="button">Finish guide</button>
+      <button class="go line" id="gshow" type="button" hidden>Go to the guide's tab</button>
+    </div>
+  </section>
+
+  <section id="setup" hidden>
+    <button class="back" id="back" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.500 4.500 7 9 11.500"/></svg>Back</button>
+    <h2>Record a video</h2>
+    <div class="rows">
+      <label class="pick">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.500" width="18" height="12.500" rx="2.500"/><path d="M8.500 20.500h7"/></svg></i>
+        <em>What</em>
+        <select id="what" aria-label="What to record">
+          <option value="tab">This tab</option>
+          <option value="window">A window</option>
+          <option value="screen">Whole screen</option>
+          <option value="area">Part of the screen</option>
+        </select>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.500 5 7 9.500 11.500 5"/></svg>
+      </label>
+      <label class="pick">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.500" width="12.500" height="11" rx="2.500"/><path d="M15.500 10.500 21 7.500v9l-5.500-3"/></svg></i>
+        <em>Camera</em>
+        <select id="cam" aria-label="Camera"><option value="off">Off</option></select>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.500 5 7 9.500 11.500 5"/></svg>
+      </label>
+      <label class="pick">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11.500a6.500 6.500 0 0 0 13 0M12 18v3"/></svg></i>
+        <em>Mic</em>
+        <select id="mic" aria-label="Microphone"><option value="default">Default microphone</option><option value="off">Off</option></select>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.500 5 7 9.500 11.500 5"/></svg>
+      </label>
+    </div>
+    <button class="go" id="start" type="button"><i aria-hidden="true"></i><span>Start recording</span></button>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <section id="asetup" hidden>
+    <button class="back" id="aback" type="button"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.500 4.500 7 9 11.500"/></svg>Back</button>
+    <h2>Record audio</h2>
+    <div class="rows">
+      <label class="pick">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.500v5h3.500L12 18.500v-13L7.500 9.500z"/><path d="M15.500 9a4 4 0 0 1 0 6M18 6.500a7.500 7.500 0 0 1 0 11"/></svg></i>
+        <em>Sound</em>
+        <select id="pc" aria-label="Which sound">
+          <option value="0">Just my mic</option>
+          <option value="1">My mic and my computer's sound</option>
+        </select>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.500 5 7 9.500 11.500 5"/></svg>
+      </label>
+      <label class="pick">
+        <i class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11.500a6.500 6.500 0 0 0 13 0M12 18v3"/></svg></i>
+        <em>Mic</em>
+        <select id="amic" aria-label="Microphone"><option value="default">Default microphone</option></select>
+        <svg class="chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.500 5 7 9.500 11.500 5"/></svg>
+      </label>
+    </div>
+    <button class="go" id="astart" type="button"><i aria-hidden="true"></i><span>Start recording</span></button>
+    <p class="hint" id="ahint"></p>
+  </section>
+
+  <section id="live" hidden>
+    <button class="go stop" id="stop" type="button"><i aria-hidden="true"></i><span>Stop and save</span></button>
+    <p class="hint">It is recording. It opens in a tab when it is saved.</p>
+  </section>
+
+  <div class="foot">
+    <div class="row"><span class="links"><a href="library.html" target="_blank">Library</a><a href="options.html" target="_blank">Settings</a></span><span class="ver" id="ver-short"></span></div>
+  </div>
+</div>
+<script src="src/setup.js"></script>
+<script src="src/popup.js"></script>
+</body>
+</html>

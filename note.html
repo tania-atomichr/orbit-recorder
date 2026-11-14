@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recording</title>
+<link rel="stylesheet" href="src/ui.css">
+<link rel="stylesheet" href="src/note.css">
+</head>
+<body>
+<header class="brand">
+  <a class="home" href="library.html"><img src="icons/icon-48.png" alt="">Orbit Recorder</a>
+  <nav class="nav"><a href="library.html"><i data-icon="list"></i><span>Library</span></a><a href="options.html"><i data-icon="cog"></i><span>Settings</span></a></nav>
+</header>
+<div class="wrap wide">
+  <p class="note" id="missing" hidden><i data-icon="alert"></i>This recording is not in this browser any more.</p>
+  <div id="page" class="grid" hidden>
+    <!-- left: the recording and what to do with it -->
+    <aside class="side">
+      <section class="card head">
+        <div class="titlerow">
+          <span class="kind" id="kindbox"></span>
+          <textarea class="title" id="title" rows="1" aria-label="Title"></textarea>
+        </div>
+        <div class="bar facts" id="facts"></div>
+        <div class="player" id="player"></div>
+        <div class="trim" id="trim" hidden>
+          <div class="track" id="track"><span class="kept" id="kept"></span><button class="h a" id="ha" type="button" aria-label="Start"></button><button class="h b" id="hb" type="button" aria-label="End"></button></div>
+          <div class="bar trimbar">
+            <span class="muted" id="trimsay"></span>
+            <span class="grow"></span>
+            <button class="pill small line" id="trimclear" type="button">Keep it all</button>
+            <button class="pill small accent" id="trimsave" type="button">Save the trim</button>
+          </div>
+          <div class="bar"><button class="pill small soft" id="clipmake" type="button"><i data-icon="cut"></i>Make a new note from this part</button></div>
+        </div>
+        <div class="note" id="cutnote" hidden></div>
+        <div class="bar acts">
+          <div class="menu" id="sendmenu"><button class="pill accent" id="send" type="button"><i data-icon="send"></i>Send</button></div>
+          <div class="menu" id="dlmenu"><button class="pill line" id="dl" type="button"><i data-icon="download"></i>Download</button></div>
+          <div class="menu" id="copymenu"><button class="pill line" id="copy" type="button"><i data-icon="copy"></i>Copy</button></div>
+          <button class="pill line" id="trimbtn" type="button"><i data-icon="cut"></i>Trim</button>
+          <button class="pill line" id="embed" type="button"><i data-icon="code"></i>Embed</button>
+          <div class="menu" id="moremenu"><button class="pill line" id="more" type="button" ><i data-icon="grip"></i><span>More</span></button></div>
+        </div>
+        <div class="field contact" id="contactbox" hidden>
+          <label for="contact">Who is this about? <small>(their email, for Teamtailor or HubSpot)</small></label>
+          <input id="contact" type="email" placeholder="name@company.com" autocomplete="off">
+        </div>
+        <div id="sentlist"></div>
+      </section>
+
+      <section class="card box ask">
+        <h2><span class="ic purple"><i data-icon="ask"></i></span>Ask about this recording</h2>
+        <form id="askform" class="askform">
+          <input id="askq" type="text" placeholder="What did they say about the budget?" autocomplete="off" aria-label="Question">
+          <button class="pill accent small" type="submit">Ask</button>
+        </form>
+        <div id="answers"></div>
+      </section>
+    </aside>
+
+    <!-- right: what was said -->
+    <main class="main">
+      <div class="note" id="work" hidden></div>
+
+      <section class="card box" id="summarybox" hidden>
+        <div class="boxhead">
+          <h2><span class="ic purple"><i data-icon="book"></i></span>Summary</h2>
+          <div class="seg" id="seg" role="tablist">
+            <button type="button" data-v="short" class="on">Short</button><button type="button" data-v="long">In depth</button><button type="button" data-v="qa">Q&amp;A</button>
+          </div>
+        </div>
+        <div id="summary" class="prose"></div>
+        <div id="sections"></div>
+        <div class="bar again">
+          <select id="template" aria-label="Template"></select>
+          <button class="pill small line" id="rewrite" type="button"><i data-icon="wand"></i>Write it up again</button>
+        </div>
+      </section>
+
+      <section class="card box" id="todobox" hidden>
+        <div class="boxhead"><h2><span class="ic yellow"><i data-icon="todo"></i></span>Next steps</h2><button class="pill small soft" id="todoadd" type="button"><i data-icon="plus"></i>Add</button></div>
+        <ul class="todos" id="todos"></ul>
+      </section>
+
+      <div class="two">
+        <section class="card box" id="talkbox" hidden>
+          <h2><span class="ic black"><i data-icon="users"></i></span>Who talked</h2>
+          <div id="talk"></div>
+        </section>
+        <section class="card box" id="moodbox" hidden>
+          <h2><span class="ic pink"><i data-icon="smile"></i></span>Mood</h2>
+          <div id="mood"></div>
+        </section>
+      </div>
+
+      <div class="two">
+        <section class="card box" id="ideabox" hidden>
+          <h2><span class="ic yellow"><i data-icon="bulb"></i></span>Ideas</h2>
+          <ul class="moments" id="ideas"></ul>
+        </section>
+        <section class="card box" id="chapterbox" hidden>
+          <h2><span class="ic purple"><i data-icon="flag"></i></span>Chapters</h2>
+          <ul class="moments" id="chapters"></ul>
+          <div class="topics" id="topics"></div>
+        </section>
+      </div>
+
+      <section class="card box" id="notesbox">
+        <div class="boxhead"><h2><span class="ic purple"><i data-icon="pen"></i></span>Your notes</h2><span class="muted small" id="saved"></span></div>
+        <div class="tools" id="tools">
+          <button type="button" data-do="h2" title="Heading">H</button>
+          <button type="button" data-do="bold" title="Bold"><b>B</b></button>
+          <button type="button" data-do="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-do="ul" title="List"><i data-icon="list"></i></button>
+          <button type="button" data-do="ol" title="Numbered list">1.</button>
+          <button type="button" data-do="check" title="Checklist"><i data-icon="todo"></i></button>
+          <button type="button" data-do="quote" title="Quote">“</button>
+          <button type="button" data-do="link" title="Link"><i data-icon="link"></i></button>
+          <button type="button" data-do="time" title="The time the player is at"><i data-icon="clock"></i></button>
+        </div>
+        <div class="editor prose" id="editor" contenteditable="true" data-empty="Type your notes. Press the clock to add the time the player is at."></div>
+      </section>
+
+      <section class="card box" id="trbox">
+        <div class="boxhead">
+          <h2><span class="ic black"><i data-icon="text"></i></span>Transcript</h2>
+          <div class="bar">
+            <button class="pill small line" id="translate" type="button" hidden><i data-icon="globe"></i><span>In English</span></button>
+            <label class="find"><i data-icon="search"></i><input id="find" type="search" placeholder="Find a word" aria-label="Find in the transcript"></label>
+          </div>
+        </div>
+        <div class="note" id="itsyou" hidden></div>
+        <div id="transcript" class="tr"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<dialog class="box" id="dialog"><div class="in" id="dialogin"></div></dialog>
+
+<script src="src/icons.js"></script>
+<script src="src/store.js"></script>
+<script src="src/format.js"></script>
+<script src="src/templates.js"></script>
+<script src="src/providers.js"></script>
+<script src="src/destinations.js"></script>
+<script src="src/clip.js"></script>
+<script src="src/export.js"></script>
+<script src="src/outbox.js"></script>
+<script src="src/recordings.js"></script>
+<script src="src/cut.js"></script>
+<script src="src/note.js"></script>
+</body>
+</html>

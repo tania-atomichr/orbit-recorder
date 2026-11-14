@@ -1,0 +1,96 @@
+/* The extension's own pages share this. Change the colours here to restyle
+   them; the panel on the page and the bar on a call carry their own copy of
+   --accent (page.js, call-card.js). */
+@font-face { font-family: "League Spartan"; src: url(../fonts/league-spartan.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+:root {
+  --accent: #9140B0; --accent-ink: #6e2c88; --accent-soft: #f4ecf8; --yellow: #F2C050; --yellow-soft: #fdf3dc;
+  --ink: #111111; --soft: #5f5f66; --line: #e6e3e8; --bg: #f7f6f8; --card: #fff;
+  --good: #15803d; --good-soft: #e9f7ef; --bad: #b42318; --bad-soft: #fdecea;
+  --radius: 16px; --shadow: 0 1px 2px rgba(17, 17, 17, .05), 0 4px 16px rgba(17, 17, 17, .05);
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.5 "League Spartan", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+[hidden] { display: none !important; }
+a { color: inherit; }
+a, button, input, select, textarea { font: inherit; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent); }
+h1 { font-size: 28px; line-height: 1.2; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 17px; margin: 0 0 10px; font-weight: 650; }
+p { margin: 0; }
+.muted { color: var(--soft); }
+svg { display: block; flex: none; }
+
+/* the strip across the top of every page */
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 920px; margin: 0 auto; padding: 18px 16px 0; }
+.brand a.home { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; }
+.brand img { width: 28px; height: 28px; }
+.nav { display: flex; gap: 4px; }
+.nav a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; text-decoration: none; color: var(--soft); font-size: 14px; font-weight: 600; }
+.nav a:hover { background: var(--card); color: var(--ink); }
+.nav a.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+
+.wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px 64px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; background: var(--ink);
+        color: #fff; font-weight: 600; font-size: 14.5px; line-height: 1; padding: 11px 16px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.pill:hover { background: #333; }
+.pill.accent { background: var(--accent); }
+.pill.accent:hover { background: var(--accent-ink); }
+.pill.line { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.pill.line:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.pill.danger { background: var(--card); color: var(--bad); box-shadow: inset 0 0 0 1px var(--line); }
+.pill.danger:hover { box-shadow: inset 0 0 0 1px var(--bad); }
+.pill:disabled { opacity: .45; cursor: default; }
+
+/* small facts: 7 steps, a date, sent */
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--soft);
+        font-size: 13px; font-weight: 600; line-height: 1.2; }
+.chip svg { width: 15px; height: 15px; }
+.chip.accent { background: var(--accent-soft); color: var(--accent-ink); }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.note { display: flex; gap: 10px; align-items: flex-start; border-radius: 12px; background: var(--accent-soft); color: var(--accent-ink); padding: 12px 14px; font-size: 14px; }
+.note svg { margin-top: 1px; }
+.note a { font-weight: 600; }
+.note.bad { background: var(--bad-soft); color: var(--bad); }
+.note.good { background: var(--good-soft); color: var(--good); }
+
+.field { display: grid; gap: 6px; margin-bottom: 16px; }
+.field label { font-weight: 600; font-size: 14px; }
+.field input, .field select { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; background: #fff; color: var(--ink); }
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field small { color: var(--soft); font-size: 13px; }
+
+.field textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; background: #fff; color: var(--ink); resize: vertical; min-height: 80px; }
+.field textarea:focus { border-color: var(--accent); outline: none; }
+.pill.small { padding: 8px 12px; font-size: 13.5px; }
+.pill.soft { background: var(--accent-soft); color: var(--accent-ink); }
+.pill.soft:hover { background: #ead9f2; }
+
+/* a menu that opens under a button (Send to, Download) */
+.menu { position: relative; display: inline-block; }
+.menu > .list { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; min-width: 240px; background: var(--card); border: 1px solid var(--line);
+                border-radius: 14px; box-shadow: 0 12px 32px rgba(17,17,17,.14); padding: 6px; display: grid; gap: 2px; }
+.menu > .list.right { left: auto; right: 0; }
+.menu > .list button, .menu > .list a { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; text-align: left; padding: 9px 10px;
+                border-radius: 10px; cursor: pointer; color: var(--ink); font-weight: 600; font-size: 14px; text-decoration: none; }
+.menu > .list button:hover, .menu > .list a:hover { background: var(--bg); }
+.menu > .list small { display: block; font-weight: 500; color: var(--soft); font-size: 12.5px; }
+.menu > .list .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; background: var(--accent-soft); color: var(--accent); }
+
+/* a box with a colour and an icon: what each kind of thing is */
+.kind { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; color: #fff; }
+.kind.call { background: var(--accent); }
+.kind.video { background: var(--ink); }
+.kind.audio { background: #a92e64; }
+.kind.guide { background: var(--yellow); color: var(--ink); }
+
+dialog.box { border: 0; border-radius: 18px; padding: 0; width: min(560px, calc(100vw - 32px)); box-shadow: 0 24px 64px rgba(17,17,17,.25); color: var(--ink); }
+dialog.box::backdrop { background: rgba(17,17,17,.4); }
+dialog.box .in { padding: 22px 24px; display: grid; gap: 14px; }
+dialog.box pre { margin: 0; background: var(--bg); border-radius: 12px; padding: 12px; font-size: 12.5px; white-space: pre-wrap; word-break: break-all; max-height: 260px; overflow: auto; }
+@media (max-width: 520px) { .brand .nav a span { display: none; } }

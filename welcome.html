@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome</title>
+<link rel="stylesheet" href="src/ui.css">
+<style>
+  .wrap { max-width: 680px; }
+  .hero { padding: 24px; display: grid; gap: 18px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .steps li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; padding: 14px; border-radius: 14px; background: var(--bg); }
+  .steps p { color: var(--soft); margin-top: 2px; }
+  .steps .pill { margin-top: 10px; }
+  .ok { color: var(--good); font-weight: 600; margin-left: 8px; } .no { color: var(--bad); font-weight: 600; margin-left: 8px; }
+  kbd { font: inherit; font-weight: 600; background: #fff; border-radius: 6px; padding: 1px 6px; box-shadow: inset 0 0 0 1px var(--line); }
+</style>
+</head>
+<body>
+<header class="brand">
+  <a class="home" href="library.html"><img src="icons/icon-48.png" alt="">Orbit Recorder</a>
+  <nav class="nav"><a href="library.html"><i data-icon="list"></i><span>Library</span></a><a href="options.html"><i data-icon="cog"></i><span>Settings</span></a></nav>
+</header>
+<div class="wrap">
+  <section class="card hero">
+    <h1>Orbit Recorder is ready</h1>
+    <ol class="steps">
+      <li><span class="kind call"><i data-icon="plus"></i></span><div><b>Pin it</b><p>Click the puzzle piece at the top right of Chrome, then the pin beside Orbit Recorder, so its icon stays in the toolbar.</p></div></li>
+      <li><span class="kind audio"><i data-icon="mic"></i></span><div><b>Allow the microphone once</b><p>So your side is recorded when you start from the toolbar.</p>
+        <button class="pill small accent" id="mic" type="button">Allow the microphone</button><span id="said" role="status"></span></div></li>
+      <li id="camera"><span class="kind video"><i data-icon="camera"></i></span><div><b>Allow the camera once</b><p>If you want your face in the corner of a video. Its name then shows under Camera in Record a video.</p>
+        <button class="pill small accent" id="cam" type="button">Allow the camera</button><span id="said-cam" role="status"></span></div></li>
+      <li><span class="kind guide"><i data-icon="plug"></i></span><div><b>Choose your services</b><p>Transcripts and write-ups use your own keys (Deepgram, AssemblyAI, OpenAI, Claude, or your own). Then connect where notes go: your app, Notion, Google Docs, Teamtailor, HubSpot.</p>
+        <a class="pill small line" href="options.html">Open Settings</a></div></li>
+    </ol>
+    <h2 style="margin:6px 0 0">Then</h2>
+    <ol class="steps">
+      <li><span class="kind call"><i data-icon="phone"></i></span><div><b>On a call</b><p>Meet, Zoom or Teams in Chrome: press Record on the card at the top of the call, or the toolbar icon (<kbd id="keys">Option Shift R</kbd>). Press it again, or Stop on the bar, to stop.</p></div></li>
+      <li><span class="kind video"><i data-icon="video"></i></span><div><b>Anywhere else</b><p>Press the icon for the menu: Record a video of a tab, a window, part of the screen or the whole screen; Record audio; or Make a step-by-step guide. Typing and passwords are never recorded in a guide.</p></div></li>
+    </ol>
+  </section>
+</div>
+<script src="src/icons.js"></script>
+<script src="src/welcome.js"></script>
+</body>
+</html>

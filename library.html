@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library</title>
+<link rel="stylesheet" href="src/ui.css">
+<style>
+  .wrap, .brand { max-width: 1120px; }
+  .top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .top h1 { margin-right: auto; }
+  .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .find { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; background: #fff; flex: 1 1 260px; }
+  .find input { border: 0; outline: none; padding: 10px 0; width: 100%; background: none; }
+  .find svg { color: var(--soft); width: 17px; height: 17px; }
+  .filters { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .filters button { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 8px 12px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line);
+                    font-weight: 600; font-size: 13.5px; cursor: pointer; color: var(--ink); }
+  .filters button svg { width: 15px; height: 15px; }
+  .filters button.on { background: var(--ink); color: #fff; box-shadow: none; }
+  .filters .n { color: var(--soft); font-weight: 500; }
+  .filters button.on .n { color: #ccc; }
+  ul.items { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+  .item { position: relative; }
+  .item a { display: grid; grid-template-rows: auto 1fr; height: 100%; overflow: hidden; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+  .item a:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(17,17,17,.06), 0 10px 28px rgba(17,17,17,.1); }
+  .thumb { aspect-ratio: 16 / 9; display: grid; place-items: center; overflow: hidden; position: relative; }
+  .thumb img, .thumb video { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .thumb.call { background: var(--accent-soft); color: var(--accent); }
+  .thumb.video { background: #1d1d1f; color: #fff; }
+  .thumb.audio { background: #f6e6ee; color: #a92e64; }
+  .thumb.guide { background: var(--yellow-soft); color: #8a5a00; }
+  .thumb > svg { width: 34px; height: 34px; }
+  .thumb .len { position: absolute; right: 8px; bottom: 8px; background: rgba(17,17,17,.78); color: #fff; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
+  .body { padding: 12px 14px 14px; display: grid; gap: 8px; align-content: start; }
+  .body .t { display: flex; gap: 10px; align-items: flex-start; }
+  .body .t .kind { width: 30px; height: 30px; border-radius: 9px; }
+  .body .t .kind svg { width: 16px; height: 16px; }
+  .body b { font-weight: 650; font-size: 15.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .body .gist { color: var(--soft); font-size: 13.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sel { position: absolute; top: 10px; left: 10px; z-index: 2; width: 22px; height: 22px; accent-color: var(--accent); }
+  body:not(.selecting) .sel { display: none; }
+  .item.chosen a { box-shadow: 0 0 0 2px var(--accent); }
+  .picked { position: sticky; top: 10px; z-index: 5; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600; }
+  .picked .grow { flex: 1; }
+  .empty { padding: 28px 24px; display: grid; gap: 16px; }
+  .starts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .start { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--bg); }
+  .start p { color: var(--soft); font-size: 14px; }
+  @media (max-width: 520px) { ul.items { grid-template-columns: minmax(0, 1fr); } .top .pill span { display: none; } }
+</style>
+</head>
+<body>
+<header class="brand">
+  <a class="home" href="library.html"><img src="icons/icon-48.png" alt="">Orbit Recorder</a>
+  <nav class="nav"><a class="on" href="library.html"><i data-icon="list"></i><span>Library</span></a><a href="options.html"><i data-icon="cog"></i><span>Settings</span></a></nav>
+</header>
+<div class="wrap">
+  <div class="top">
+    <h1>Library</h1>
+    <button class="pill line" id="upload" type="button"><i data-icon="upload"></i><span>Upload a recording</span></button>
+    <button class="pill line" id="select" type="button"><i data-icon="todo"></i><span>Select</span></button>
+    <input type="file" id="file" accept="audio/*,video/*" hidden>
+  </div>
+  <div class="tools">
+    <label class="find"><i data-icon="search"></i><input id="q" type="search" placeholder="Find a word in a title, your notes or anything said" aria-label="Find"></label>
+    <div class="filters" id="filters"></div>
+  </div>
+  <div class="card picked" id="picked" hidden>
+    <span id="pickedn"></span><span class="grow"></span>
+    <button class="pill small line" id="pickall" type="button">Choose all</button>
+    <div class="menu" id="pmenu"><button class="pill small line" id="psend" type="button"><i data-icon="send"></i>Send</button></div>
+    <button class="pill small line" id="parchive" type="button"><i data-icon="archive"></i><span>Archive</span></button>
+    <button class="pill small danger" id="pdelete" type="button"><i data-icon="trash"></i>Delete</button>
+  </div>
+  <p class="note" id="busy" hidden></p>
+  <div class="card empty" id="empty" hidden>
+    <h2 style="margin:0">Nothing here yet</h2>
+    <div class="starts">
+      <div class="start"><span class="kind call"><i data-icon="phone"></i></span><div><b>Record a call</b><p>Open a Google Meet, Zoom or Teams call in Chrome. A card asks to record it.</p></div></div>
+      <div class="start"><span class="kind video"><i data-icon="video"></i></span><div><b>Record a video</b><p>Press the extension's icon, then Record a video: a tab, a window or the screen, with your face.</p></div></div>
+      <div class="start"><span class="kind audio"><i data-icon="mic"></i></span><div><b>Record audio</b><p>A voice note, or a call in a desktop app.</p></div></div>
+      <div class="start"><span class="kind guide"><i data-icon="steps"></i></span><div><b>Make a guide</b><p>Click through a task once. Each click becomes a step with a picture.</p></div></div>
+    </div>
+  </div>
+  <p class="muted" id="none" hidden>Nothing matches.</p>
+  <ul class="items" id="list"></ul>
+</div>
+<script src="src/icons.js"></script>
+<script src="src/store.js"></script>
+<script src="src/format.js"></script>
+<script src="src/templates.js"></script>
+<script src="src/destinations.js"></script>
+<script src="src/clip.js"></script>
+<script src="src/export.js"></script>
+<script src="src/outbox.js"></script>
+<script src="src/recordings.js"></script>
+<script src="src/library.js"></script>
+</body>
+</html>
