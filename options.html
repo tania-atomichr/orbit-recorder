@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+<link rel="stylesheet" href="src/ui.css">
+<style>
+  .wrap { max-width: 780px; }
+  .lead { margin: 6px 0 22px; }
+  section.card { padding: 20px 22px; margin-bottom: 18px; }
+  section h2 { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-bottom: 4px; }
+  section > p.muted { margin-bottom: 16px; }
+  .ic { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none; color: #fff; background: var(--accent); }
+  .ic.black { background: var(--ink); } .ic.yellow { background: var(--yellow); color: var(--ink); } .ic.pink { background: #a92e64; }
+  .ic svg { width: 17px; height: 17px; }
+  .check { display: flex; gap: 10px; align-items: center; margin: 0 0 14px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 14px; }
+  .checks .check { margin: 0; font-weight: 500; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .grow { flex: 1; }
+  .conn { border-radius: 14px; background: var(--bg); padding: 14px 16px; margin-bottom: 12px; }
+  .conn .top { display: flex; align-items: center; gap: 10px; }
+  .conn .top b { flex: 1; }
+  .conn .body { margin-top: 14px; }
+  .tpl { border-radius: 14px; background: var(--bg); padding: 12px 14px; margin-bottom: 10px; }
+  .tpl ol { margin: 6px 0 0; padding-left: 20px; color: var(--soft); font-size: 14px; }
+  .site { font-size: 13px; }
+  code { background: var(--bg); padding: 1px 6px; border-radius: 6px; font-size: 12.5px; word-break: break-all; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px; font-weight: 600; z-index: 30; }
+</style>
+</head>
+<body>
+<header class="brand">
+  <a class="home" href="library.html"><img src="icons/icon-48.png" alt="">Orbit Recorder</a>
+  <nav class="nav"><a href="library.html"><i data-icon="list"></i><span>Library</span></a><a class="on" href="options.html"><i data-icon="cog"></i><span>Settings</span></a></nav>
+</header>
+<div class="wrap">
+  <h1>Settings</h1>
+  <p class="muted lead">Everything you record stays in this browser until you send it somewhere. Keys you add here are kept in this browser's extension storage and are only sent to the service they belong to.</p>
+
+  <section class="card" id="you">
+    <h2><span class="ic black"><i data-icon="users"></i></span>You</h2>
+    <p class="muted">Your name, for the voice that is you in a transcript.</p>
+    <div class="field"><label for="myName">Your name</label><input id="myName" autocomplete="name" placeholder="Alex Doe"></div>
+  </section>
+
+  <section class="card" id="transcripts">
+    <h2><span class="ic"><i data-icon="text"></i></span>Transcripts</h2>
+    <p class="muted">Who turns speech into words. Your own key; the sound goes straight from this browser to them.</p>
+    <div class="field"><label for="tUse">Service</label><select id="tUse"></select></div>
+    <div id="tFields"></div>
+  </section>
+
+  <section class="card" id="writing">
+    <h2><span class="ic yellow"><i data-icon="wand"></i></span>Write-ups</h2>
+    <p class="muted">Who writes the summary, next steps, chapters and mood, answers Ask, translates, and rewrites guides.</p>
+    <div class="field"><label for="wUse">Service</label><select id="wUse"></select></div>
+    <div id="wFields"></div>
+    <label class="check"><input type="checkbox" id="autoWrite"> Write each recording up as soon as its transcript is ready</label>
+    <div class="field"><label for="template">Template to start with</label><select id="template"></select><small>Calls, videos and voice notes each start with the first template made for them unless you choose one here.</small></div>
+  </section>
+
+  <section class="card" id="templates">
+    <h2><span class="ic pink"><i data-icon="book"></i></span>Your templates</h2>
+    <p class="muted">The headings a write-up has, and a line on what goes under each. Built-in ones: Meeting, Sales or discovery call, Interview, One-to-one, Customer support call, Video explainer, Voice note.</p>
+    <div id="tplList"></div>
+    <button class="pill small soft" id="tplAdd" type="button"><i data-icon="plus"></i>Add a template</button>
+  </section>
+
+  <section class="card" id="connections">
+    <h2><span class="ic"><i data-icon="plug"></i></span>Where things go</h2>
+    <p class="muted">Send finished notes and guides to your own app, Notion, Google Docs, Teamtailor or HubSpot. Zapier, Make and n8n work through a webhook. Each place can take everything by itself, or only what you send it by hand.</p>
+    <div id="connList"></div>
+    <div class="row"><select id="connKind" aria-label="Kind of place"></select><button class="pill small accent" id="connAdd" type="button"><i data-icon="plus"></i>Add</button></div>
+  </section>
+
+  <section class="card" id="calls">
+    <h2><span class="ic black"><i data-icon="phone"></i></span>Calls</h2>
+    <label class="check"><input type="checkbox" id="callCard"> Ask to record when I join a Google Meet, Zoom or Teams call</label>
+    <label class="check"><input type="checkbox" id="callVideo"> Keep the picture too (sound only when off)</label>
+    <label class="check"><input type="checkbox" id="consent"> Remind me to tell everyone I am recording</label>
+    <label class="check"><input type="checkbox" id="liveWords"> Show the words as they are said (Deepgram only)</label>
+  </section>
+</div>
+<dialog class="box" id="dialog"><div class="in" id="dialogin"></div></dialog>
+<script src="src/icons.js"></script>
+<script src="src/store.js"></script>
+<script src="src/format.js"></script>
+<script src="src/templates.js"></script>
+<script src="src/providers.js"></script>
+<script src="src/destinations.js"></script>
+<script src="src/export.js"></script>
+<script src="src/outbox.js"></script>
+<script src="src/options.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orbit · recording</title>
+<style>
+  @font-face { font-family: "League Spartan"; src: url(fonts/league-spartan.woff2) format("woff2"); font-weight: 100 900; font-display: block; }
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; font: 14px/1.4 "League Spartan", Inter, system-ui, -apple-system, sans-serif; color: #111; background: #fff; }
+  .w { padding: 16px 18px; display: grid; gap: 12px; }
+  .top { display: flex; align-items: center; gap: 10px; }
+  .top img { width: 26px; height: 26px; }
+  .top b { font-size: 17px; font-weight: 600; }
+  p { margin: 0; color: #444; }
+  p strong { color: #111; font-weight: 600; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  button { font: inherit; font-size: 15px; font-weight: 600; border-radius: 999px; padding: 11px 18px 10px; cursor: pointer; border: 0; }
+  .ghost { background: #fff; color: #111; box-shadow: inset 0 0 0 1.5px #111; } .ghost:hover { background: #f1f1f1; }
+  .stop { background: #111; color: #fff; display: inline-flex; align-items: center; gap: 8px; } .stop:hover { background: #333; }
+  .stop i { width: 10px; height: 10px; border-radius: 2px; background: #fff; }
+  button:focus-visible, a:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #9140B0; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #e04848; flex: none; }
+  .paused .dot { background: #9b9b9b; }
+  .tm { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+  /* RECORDING: a slim strip in the corner of the screen. On the left, what
+     is being recorded, live and small, exactly as the video will look. Beside
+     it the time, and one chip per thing being captured, each saying on or off. */
+  .strip { display: grid; grid-template-columns: 148px 1fr auto; grid-template-areas: "peek clock btns" "peek chips chips"; column-gap: 14px; row-gap: 8px; align-items: center; }
+  .peek { grid-area: peek; } .clock { grid-area: clock; } .chips { grid-area: chips; align-self: start; } .btns { grid-area: btns; }
+  .peek { position: relative; width: 148px; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #111; }
+  .peek video { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .peek .rec { position: absolute; left: 6px; top: 6px; display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,.66); color: #fff;
+               font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 7px 2px; }
+  .peek .rec .dot { width: 7px; height: 7px; }
+  .facts { display: grid; gap: 8px; min-width: 0; }
+  .clock { display: flex; align-items: baseline; gap: 8px; }
+  .tm { font-size: 22px; }
+  .what { font-size: 13px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 9px 3px 7px; font-size: 12.5px; font-weight: 600;
+          background: #f3eef6; color: #111; white-space: nowrap; }
+  .chip svg { width: 14px; height: 14px; flex: none; color: #9140B0; }
+  .chip .lv { display: block; width: 26px; height: 5px; border-radius: 3px; background: #e2d6ea; overflow: hidden; }
+  .chip .lv i { display: block; height: 100%; width: 0; background: #9140B0; border-radius: 3px; transition: width .1s; }
+  .chip.off { background: #fbe9f1; color: #a92e64; }
+  .chip.off svg { color: #a92e64; }
+  .btns { display: flex; gap: 6px; align-items: center; }
+  .btns button { padding: 9px 14px 8px; font-size: 14px; }
+  .warn { font-size: 13px; color: #a92e64; background: #fbe9f1; border-radius: 12px; padding: 8px 12px; }
+  .warn b { font-weight: 600; }
+  .paused .peek { opacity: .5; }
+  /* Record audio: no picture, so no preview */
+  .audio .strip { grid-template-columns: 1fr auto; grid-template-areas: "clock btns" "chips chips"; } .audio .peek { display: none; }
+  @media (max-width: 460px) { .strip { grid-template-columns: 1fr auto; grid-template-areas: "clock btns" "chips chips"; } .peek { display: none; } }
+  /* PART OF THE SCREEN: the screen live, the part outside the box dimmed */
+  #area { display: grid; gap: 12px; }
+  .stage { position: relative; width: 100%; max-height: calc(100vh - 170px); aspect-ratio: 16 / 9; margin: 0 auto; border-radius: 12px; overflow: hidden; background: #111; cursor: crosshair; touch-action: none; user-select: none; }
+  .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; display: block; pointer-events: none; }
+  .box { position: absolute; box-shadow: 0 0 0 9999px rgba(0,0,0,.55); outline: 3px solid #9140B0; outline-offset: -1px; border-radius: 4px; cursor: move; }
+  .box-n { position: absolute; left: 6px; top: 6px; background: #9140B0; color: #fff; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 8px 2px; }
+  .box-n:empty { display: none; }
+  .stop .go { border-radius: 50%; background: #e04848; }
+  .small { font-size: 13px; }
+  a { color: #7a2f97; font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { .chip .lv i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="top" id="top"><img src="icons/icon-48.png" alt=""><b id="head">Record a video</b></div>
+
+  <section id="pick">
+    <p id="pick-t">Getting ready…</p>
+  </section>
+
+  <section id="area" hidden>
+    <p class="area-t"><strong>Drag a box over the part to record.</strong> Drag inside it to move it. Only what is in the box goes in the video.</p>
+    <div class="stage" id="stage"><video id="see" muted autoplay playsinline></video><div class="box" id="box"><span class="box-n" id="area-n"></span></div></div>
+    <div class="row">
+      <button class="stop" id="area-go" type="button"><i aria-hidden="true" class="go"></i>Record this part</button>
+      <button class="ghost" id="area-all" type="button">Whole screen instead</button>
+    </div>
+  </section>
+
+  <section id="live" hidden>
+    <div class="strip">
+      <div class="peek" aria-hidden="true"><video id="peek" muted autoplay playsinline></video><span class="rec"><span class="dot"></span>REC</span></div>
+      <div class="clock"><span class="tm" id="tm">0:00</span><span class="what" id="state">Recording</span></div>
+      <div class="chips" id="chips" aria-label="What is being recorded"></div>
+      <div class="btns">
+        <button class="ghost" id="pause" type="button">Pause</button>
+        <button class="stop" id="stop" type="button"><i aria-hidden="true"></i>Stop</button>
+      </div>
+    </div>
+    <p class="warn" id="warn" role="status" hidden></p>
+  </section>
+
+  <section id="done" hidden>
+    <p id="done-t" role="status"></p>
+    <div class="row" id="done-row" style="margin-top:12px"></div>
+  </section>
+</div>
+<script src="src/store.js"></script>
+<script src="src/recordings.js"></script>
+<script src="src/setup.js"></script>
+<script src="src/live.js"></script>
+<script src="src/screen.js"></script>
+</body>
+</html>
