@@ -59,7 +59,7 @@ function check(cond, yes, no) { cond ? ok(yes) : fail(no || yes); }
 
   // a copy of the extension that may reach the demo site (stands in for the icon press)
   const ext = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-'));
-  fs.cpSync(ROOT, ext, { recursive: true, filter: (p) => !/[\\/](\.git|node_modules|test|docs|examples)([\\/]|$)/.test(p.slice(ROOT.length)) });
+  fs.cpSync(path.join(ROOT, 'extension'), ext, { recursive: true });
   const man = JSON.parse(fs.readFileSync(path.join(ext, 'manifest.json')));
   man.host_permissions = ['<all_urls>'];   // captureVisibleTab needs all sites or a real icon press
   fs.writeFileSync(path.join(ext, 'manifest.json'), JSON.stringify(man));

@@ -15,7 +15,7 @@ No build step: the extension is plain JavaScript, HTML and CSS.
 
 1. Fork and clone the repository.
 2. Open `chrome://extensions`, turn on **Developer mode**, press
-   **Load unpacked** and pick the repository folder.
+   **Load unpacked** and pick the `extension` folder.
 3. After a change, press the reload icon on the extension's card, then reload
    the page you are testing on.
 
@@ -46,12 +46,12 @@ request runs it on GitHub as well.
 - **No new permissions** unless there is no other way, explained in the pull
   request. Prefer optional permissions asked at the moment they are needed.
 - **Talking to other systems has one home each.** Places to send to live in
-  `src/destinations.js`, transcript and write-up services in
-  `src/providers.js`. Add one there rather than a `fetch` elsewhere.
+  `extension/src/destinations.js`, transcript and write-up services in
+  `extension/src/providers.js`. Add one there rather than a `fetch` elsewhere.
 - **The formats are a contract.** A change to `orbit-note/1` or
   `step-guide/1` (see [docs/FORMAT.md](docs/FORMAT.md)) must stay backwards
   compatible, or bump the number and say so in [CHANGELOG.md](CHANGELOG.md).
-- **Write-up prompts and templates** live in `src/templates.js`. A new
+- **Write-up prompts and templates** live in `extension/src/templates.js`. A new
   template needs a name, the kinds it is for, and its sections.
 
 ## Code style
@@ -65,10 +65,10 @@ request runs it on GitHub as well.
 
 ## Releases
 
-1. Update `version` in `manifest.json` and `package.json`.
+1. Update `version` in `extension/manifest.json` and `package.json`.
 2. Add a section to [CHANGELOG.md](CHANGELOG.md).
 3. Tag the commit `vX.Y.Z` and create a GitHub release with a zip of the
-   extension (`git archive --format=zip -o orbit-recorder.zip HEAD`).
+   extension (`cd extension && zip -r ../orbit-recorder.zip .`).
 
 By contributing you agree that your contribution is licensed under the
 [MIT License](LICENSE), and to follow the [Code of Conduct](CODE_OF_CONDUCT.md).

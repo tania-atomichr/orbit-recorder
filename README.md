@@ -1,4 +1,4 @@
-<p align="center"><img src="icons/icon-128.png" width="72" alt=""></p>
+<p align="center"><img src="extension/icons/icon-128.png" width="72" alt=""></p>
 
 <h1 align="center">Orbit Recorder</h1>
 
@@ -36,7 +36,7 @@ how-to guides, and as a starting point for your own recorder.
 1. **Get the code:** press the green **Code** button above, then
    **Download ZIP**, and unzip it. (Or `git clone` this repository.)
 2. Open `chrome://extensions` in Chrome and turn on **Developer mode** (top right).
-3. Press **Load unpacked** and pick the unzipped folder. A welcome page opens.
+3. Press **Load unpacked** and pick the `extension` folder inside it. A welcome page opens.
 4. On the welcome page: pin the extension, allow the microphone (and the
    camera if you want your face in videos), and add a transcript service and
    a write-up service with your own keys.
@@ -56,7 +56,8 @@ and Brave, but they are not tested yet.
 - [Connecting it to your own system](#connecting-it-to-your-own-system): [webhook](#your-own-backend-or-web-app-webhook), [Notion](#notion), [Google Docs](#google-docs), [Teamtailor](#teamtailor), [HubSpot](#hubspot), [embed](#embed-it-in-your-own-page), [add your own](#add-a-place-of-your-own)
 - [Transcripts and write-ups](#transcripts-and-write-ups)
 - [Privacy](#privacy) and [permissions](#permissions)
-- [How it is built](#how-it-is-built), [Test](#test), [Contributing](#contributing) and [Licence](#licence)
+- [How it is built](#how-it-is-built), [Test](#test) and [redrawing the pictures](#redraw-the-pictures)
+- [Contributing](#contributing), [Photo credits](#photo-credits) and [Licence](#licence)
 
 ## What it looks like
 
@@ -304,7 +305,7 @@ changes the colour. See [docs/EMBED.md](docs/EMBED.md).
 
 ### Add a place of your own
 
-Every place lives in [`src/destinations.js`](src/destinations.js): a label,
+Every place lives in [`extension/src/destinations.js`](extension/src/destinations.js): a label,
 the fields Settings shows, the addresses it needs, and one `send(item, config)`
 that returns a promise. Copy the webhook one, change `send`, and it appears in
 Settings with retries, "Sent" states and select-many sending for free.
@@ -358,18 +359,29 @@ Full details: [PRIVACY.md](PRIVACY.md).
 
 Plain JavaScript, HTML and CSS, Manifest V3, no dependencies, no build step.
 
+```
+extension/   the Chrome extension: this is the folder you load in Chrome
+  src/       every script, one job each (below)
+  icons/, fonts/, *.html
+embed/       orbit-embed.js: show a note or a guide in any web page
+examples/    receiver/: a small backend that gets notes and guides
+docs/        the pictures in this README, the formats and the embed guide
+scripts/     redraw every picture and the demo GIF from made-up data
+test/        the end-to-end test and its demo site
+```
+
 | File | What it does |
 |---|---|
-| `src/background.js` | The service worker: loads the parts below. |
-| `src/rec-bg.js`, `src/offscreen.js`, `src/recordings.js` | Calls and audio: capture in an offscreen page, saved in 5-second pieces. |
-| `src/screen.js` | Videos: screen, window, tab or part, with the face bubble and the recording strip. |
-| `src/call-card.js` | The card and the bar on a call, notes typed during it, live words. |
-| `src/guide-bg.js`, `src/page.js` | Guides: pictures, clips, sentences, the panel. |
-| `src/note.js`, `src/guide-page.js`, `src/library.js` | The note page, the guide editor, the library. |
-| `src/providers.js`, `src/templates.js`, `src/live.js` | Transcript and write-up services, templates, live words. |
-| `src/destinations.js`, `src/outbox.js` | Places to send to, and sending with retries. |
-| `src/format.js`, `src/export.js` | Sentences, the JSON formats, downloads. |
-| `src/store.js` | IndexedDB: notes, guides, steps, recordings. |
+| `extension/src/background.js` | The service worker: loads the parts below. |
+| `extension/src/rec-bg.js`, `extension/src/offscreen.js`, `extension/src/recordings.js` | Calls and audio: capture in an offscreen page, saved in 5-second pieces. |
+| `extension/src/screen.js` | Videos: screen, window, tab or part, with the face bubble and the recording strip. |
+| `extension/src/call-card.js` | The card and the bar on a call, notes typed during it, live words. |
+| `extension/src/guide-bg.js`, `extension/src/page.js` | Guides: pictures, clips, sentences, the panel. |
+| `extension/src/note.js`, `extension/src/guide-page.js`, `extension/src/library.js` | The note page, the guide editor, the library. |
+| `extension/src/providers.js`, `extension/src/templates.js`, `extension/src/live.js` | Transcript and write-up services, templates, live words. |
+| `extension/src/destinations.js`, `extension/src/outbox.js` | Places to send to, and sending with retries. |
+| `extension/src/format.js`, `extension/src/export.js` | Sentences, the JSON formats, downloads. |
+| `extension/src/store.js` | IndexedDB: notes, guides, steps, recordings. |
 | `embed/orbit-embed.js` | `<orbit-note>` and `<orbit-guide>` for any page. |
 
 ## Test
@@ -385,10 +397,24 @@ guide made by clicking (sentences, nothing typed kept, clips, Undo, Pause,
 following pages), editing and the picture editor, downloads, a note page with
 a summary and transcript, sending to a test webhook (token, signature,
 multipart with the file, retries, a 401 that stops), a trimmed note sending
-only its part, the library, and the embed. Screenshots land in `test/out/`.
+only its part, the library, and the embed. 44 checks; screenshots land in `test/out/`.
 
 Recording a real call, the camera and live words need a real Chrome with a
 microphone, so they are checked by hand before a release.
+
+### Redraw the pictures
+
+Every picture in this README is made by a script, so a change to a page can
+be shown again in one go:
+
+```sh
+npm test                          # the guide panel and picture editor
+node scripts/screenshots.js       # every page, the call, the menus
+node scripts/demo-frames.js       # the frames of the demo GIF
+python3 scripts/make_pictures.py  # crops them into docs/ and builds docs/demo.gif (Pillow, ffmpeg)
+```
+
+The made-up note, guide and call people are in `scripts/demo-data/`.
 
 ## Contributing
 
@@ -398,11 +424,11 @@ described in [SECURITY.md](SECURITY.md).
 
 ## Photo credits
 
-The people on the demo call are free photos from [Unsplash](https://unsplash.com/license):
-by [Philip White](https://unsplash.com/@philipwhite?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText),
-[Devin Santiago](https://unsplash.com/@ydcphotography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
-and [Brooke Balentine](https://unsplash.com/@brookebalentine?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
-The names on the call are made up.
+The people on the demo call are free photos by
+[Vitaly Gariev](https://unsplash.com/@silverkblack?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+on [Unsplash](https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText),
+used under the [Unsplash License](https://unsplash.com/license). The names on
+the call are made up.
 
 ## Licence
 
