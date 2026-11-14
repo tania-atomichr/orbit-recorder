@@ -433,3 +433,5 @@ the call are made up.
 ## Licence
 
 [MIT](LICENSE). Use it, change it and ship it in your own product.
+
+Made by [tania-atomichr](https://github.com/tania-atomichr).
