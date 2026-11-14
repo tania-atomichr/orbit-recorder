@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/build%20step-none-111.svg" alt="No build step">
 </p>
 
-<p align="center"><img src="docs/demo.gif" width="800" alt="Making a guide on a demo page, the finished guide, a call's note with its summary, next steps, mood and transcript, and the library"></p>
+<p align="center"><img src="docs/demo.gif" width="800" alt="Recording a call, making a guide on a demo page, the finished guide, a call's note with its summary, next steps, mood and transcript, and the library"></p>
 
 ## Why use it
 
@@ -56,26 +56,41 @@ and Brave, but they are not tested yet.
 - [Connecting it to your own system](#connecting-it-to-your-own-system): [webhook](#your-own-backend-or-web-app-webhook), [Notion](#notion), [Google Docs](#google-docs), [Teamtailor](#teamtailor), [HubSpot](#hubspot), [embed](#embed-it-in-your-own-page), [add your own](#add-a-place-of-your-own)
 - [Transcripts and write-ups](#transcripts-and-write-ups)
 - [Privacy](#privacy) and [permissions](#permissions)
-- [How it is built](#how-it-is-built), [Test](#test), [Contributing](#contributing)
+- [How it is built](#how-it-is-built), [Test](#test), [Contributing](#contributing) and [Licence](#licence)
 
 ## What it looks like
 
 Every picture here comes from made-up data in the test run.
 
-**The note page** for a call: the recording with Send, Download, Copy, Trim
-and Embed on the left, and on the right the summary from a template, next
-steps you can tick, who talked, the mood, ideas, chapters, your own notes and
-the transcript.
+**On a call**, a card asks whether to record. One press records both sides;
+the Video switch adds the picture.
+
+![Record this meeting? on a call, with the Video switch and Record](docs/call-offer.png)
+
+**While it records**, a bar shows the time, a level for you and one for
+them, Pause, Note and Stop. With live words on, the last thing said shows
+at the bottom.
+
+![The recording bar on a call, with levels and the last words said](docs/call-bar.png)
+
+**The note** writes itself up when the call ends: the summary from a
+template, next steps you can tick, who talked, the mood, ideas, chapters,
+your own notes and the transcript.
 
 ![A call's note page](docs/note.png)
+
+**Trim** keeps only the part you want, and only that part is sent.
+**Send** goes to any place you connected and says where it went.
+
+<p><img src="docs/note-trim.png" width="380" alt="Trimming a recording: Keep 00:00 to 00:20, Save the trim, Make a new note from this part"> &nbsp; <img src="docs/note-send.png" width="380" alt="The Send menu with Our CRM, sent before, and Team wiki on Notion"></p>
 
 **Making a guide.** A panel on the page counts the steps and shows the last
 three. Every click is a step with a picture; what you type is never kept.
 
 ![The guide panel on a demo page](docs/panel.png)
 
-**The finished guide**, ready to edit: a sentence per step, the clicked thing
-ringed, a tip under any step, reorder, add, take out, "Write it for me".
+**The finished guide**, ready to edit: a sentence per step, the clicked
+thing ringed, a tip under any step, reorder, add, take out, Write it for me.
 
 ![A finished guide](docs/guide.png)
 
@@ -83,13 +98,19 @@ ringed, a tip under any step, reorder, add, take out, "Write it for me".
 
 ![Covering part of a step's picture](docs/picture-editor.png)
 
-<table>
-<tr>
-<td width="32%"><b>One press to start.</b> The popup offers the four kinds; a video starts with the setup you used last.<br><br><img src="docs/popup.png" alt="The popup"></td>
-<td width="32%"><b>On a phone-sized window</b> the note is one column.<br><br><img src="docs/note-phone.png" alt="The note page at phone width"></td>
-<td><b>The library</b>: everything you made, find a word anyone said, filter by kind, select many.<br><br><img src="docs/library.png" alt="The library"><br><br><b>Settings</b>: your services, your templates, where things go.<br><br><img src="docs/settings.png" alt="Settings"></td>
-</tr>
-</table>
+**The library**: everything you made, find a word anyone said, filter by
+kind, select many.
+
+![The library](docs/library.png)
+
+**Where things go**: add your own backend, Notion, Google Docs, Teamtailor
+or HubSpot in Settings, and **Embed** gives you two lines for your own page.
+
+<p><img src="docs/settings-places.png" width="460" alt="Where things go in Settings, with two places and Add"> &nbsp; <img src="docs/note-embed.png" width="340" alt="Show this note in your own page, with the code to copy"></p>
+
+**One press to start** from the popup, and **every page works on a phone-sized window**:
+
+<p><img src="docs/popup.png" width="200" alt="The popup with the four kinds"> &nbsp; <img src="docs/phone-note.png" width="200" alt="A note at phone width"> &nbsp; <img src="docs/phone-guide.png" width="200" alt="A guide at phone width"> &nbsp; <img src="docs/phone-library.png" width="200" alt="The library at phone width"></p>
 
 ## Everything it does
 
@@ -375,4 +396,6 @@ Bug reports, ideas and pull requests are welcome. Read
 [CONTRIBUTING.md](CONTRIBUTING.md) first; report security problems as
 described in [SECURITY.md](SECURITY.md).
 
-[MIT](LICENSE). Made with care by the Orbit Recorder contributors.
+## Licence
+
+[MIT](LICENSE). Use it, change it and ship it in your own product.
