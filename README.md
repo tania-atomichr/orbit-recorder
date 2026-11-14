@@ -60,7 +60,7 @@ and Brave, but they are not tested yet.
 
 ## What it looks like
 
-Every picture here comes from made-up data in the test run.
+Every picture here comes from made-up data in the test run; the people on the call are free Unsplash photos (see [Photo credits](#photo-credits)).
 
 **On a call**, a card asks whether to record. One press records both sides;
 the Video switch adds the picture.
@@ -395,6 +395,14 @@ microphone, so they are checked by hand before a release.
 Bug reports, ideas and pull requests are welcome. Read
 [CONTRIBUTING.md](CONTRIBUTING.md) first; report security problems as
 described in [SECURITY.md](SECURITY.md).
+
+## Photo credits
+
+The people on the demo call are free photos from [Unsplash](https://unsplash.com/license):
+by [Philip White](https://unsplash.com/@philipwhite?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText),
+[Devin Santiago](https://unsplash.com/@ydcphotography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+and [Brooke Balentine](https://unsplash.com/@brookebalentine?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText).
+The names on the call are made up.
 
 ## Licence
 
